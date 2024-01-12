@@ -35,7 +35,8 @@ export class DriverUtil {
      */
     async downloadChromeDriver(version: string): Promise<string> {
         const majorVersion = version.split('.')[0];
-        const file = path.join(this.downloadFolder, process.platform === 'win32' ? 'chromedriver.exe' : 'chromedriver');
+        const exeFile = process.platform === 'win32' ? 'chromedriver.exe' : 'chromedriver';
+        const file = path.join(this.downloadFolder, exeFile);
         if (fs.existsSync(file)) {
             let localVersion = '';
             try {
@@ -62,6 +63,12 @@ export class DriverUtil {
 
         console.log(`Unpacking ChromeDriver ${version} into ${this.downloadFolder}`);
         await Unpack.unpack(fileName, this.downloadFolder);
+        if (+majorVersion > 114) {
+            // Zipped content is a folder containing the driver
+            const folderPath = fileName.replace('.zip', '');
+            const driverPath = path.join(folderPath, exeFile);
+            fs.renameSync(driverPath, file);
+        }
         if (process.platform !== 'win32') {
             fs.chmodSync(file, 0o755);
         }
