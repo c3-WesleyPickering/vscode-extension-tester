@@ -83,7 +83,7 @@ export class VSBrowser {
         options = options as Options;
 
         const prefs = new logging.Preferences();
-        prefs.setLevel(logging.Type.DRIVER, this.logLevel.name || this.logLevel);
+        prefs.setLevel(logging.Type.DRIVER, this.logLevel);
         options.setLoggingPrefs(prefs);
 
         console.log('Launching browser...');
