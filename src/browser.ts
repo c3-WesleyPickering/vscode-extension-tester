@@ -8,6 +8,7 @@ import { Options, ServiceBuilder } from 'selenium-webdriver/chrome';
 import { getLocatorsPath } from 'vscode-extension-tester-locators';
 import { CodeUtil, ReleaseQuality } from './util/codeUtil';
 import { DEFAULT_STORAGE_FOLDER } from './extester';
+import { Level } from 'selenium-webdriver/lib/logging';
 
 export class VSBrowser {
     static readonly baseVersion = '1.37.0';
@@ -18,7 +19,7 @@ export class VSBrowser {
     private _driver!: WebDriver;
     private codeVersion: string;
     private releaseType: ReleaseQuality;
-    private logLevel: logging.Level;
+    private logLevel: Level;
     private static _instance: VSBrowser;
 
     constructor(codeVersion: string, releaseType: ReleaseQuality, customSettings: Object = {}, logLevel: logging.Level = logging.Level.INFO) {
@@ -82,13 +83,13 @@ export class VSBrowser {
         options = options as Options;
 
         const prefs = new logging.Preferences();
-        prefs.setLevel(logging.Type.DRIVER, this.logLevel);
+        prefs.setLevel(logging.Type.DRIVER, this.logLevel.name || this.logLevel);
         options.setLoggingPrefs(prefs);
 
         console.log('Launching browser...');
         this._driver = await new Builder()
-            .setChromeService(new ServiceBuilder(path.join(this.storagePath, process.platform === 'win32' ? 'chromedriver.exe' : 'chromedriver')))
             .forBrowser('chrome')
+            .setChromeService(new ServiceBuilder(path.join(this.storagePath, process.platform === 'win32' ? 'chromedriver.exe' : 'chromedriver')))
             .setChromeOptions(options)
             .build();
         VSBrowser._instance = this;
