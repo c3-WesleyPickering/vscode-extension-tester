@@ -39,7 +39,7 @@ export class Unpack {
 				);
 			} else if (input.toString().endsWith('.zip')) {
 				fs.mkdirpSync(target.toString());
-				if (process.platform === 'darwin' || process.platform === 'linux') {
+				if (process.platform === 'darwin' || process.platform === 'linux' || process.platform === 'win32') {
 					exec(`cd ${target} && unzip -qo ${input.toString()}`, (err) => {
 						if (err) {
 							reject(new Error(err.message));
